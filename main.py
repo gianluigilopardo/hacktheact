@@ -61,7 +61,8 @@ def setup_qa_system(dir, files):
     return qa_chain 
 
 # Define the directory and file names for the documents
-dir = "https://raw.githubusercontent.com/gianluigilopardo/hacktheact/main/docs/"
+# dir = "https://raw.githubusercontent.com/gianluigilopardo/hacktheact/main/docs/"
+dir = "docs/"
 files = ['act_en', #'act_it', 'act_es', 'act_fr', 'act_de', 
         'annex_en', #'annex_it', 'annex_es', 'annex_fr', 'annex_de', 
     ]
