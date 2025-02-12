@@ -15,14 +15,14 @@ The project utilizes [Langchain](https://www.langchain.com/) and [Streamlit](htt
 1.  **Clone the repository:**
 
 ```bash
-    git clone https://github.com/gianluigilopardo/hacktheact.git
-    cd hacktheact
+git clone https://github.com/gianluigilopardo/hacktheact.git
+cd hacktheact
 ```
 
 2.  **Install the dependencies:**
 
 ```bash
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 3.  **Set up environment variables:**
@@ -30,8 +30,8 @@ The project utilizes [Langchain](https://www.langchain.com/) and [Streamlit](htt
 Create a `.env` file in the root directory with the following variables:
 
 ```
-    OPENAI_API_KEY=your_openai_api_key
-    NVIDIA_API_KEY=your_nvidia_api_key
+OPENAI_API_KEY=your_openai_api_key
+NVIDIA_API_KEY=your_nvidia_api_key
 ```
 Replace `your_openai_api_key` and `your_nvidia_api_key` with your actual API keys.
 
@@ -39,5 +39,5 @@ Replace `your_openai_api_key` and `your_nvidia_api_key` with your actual API key
 
 Run the Streamlit app:
 ```
-    streamlit run main.py
+streamlit run main.py
 ```

@@ -16,6 +16,8 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 
 load_dotenv() 
+openai_api_key = st.secrets["api_keys"]["OPENAI_API_KEY"]
+nvidia_api_key = st.secrets["api_keys"]["NVIDIA_API_KEY"]
 
 # Set the title of the Streamlit app
 st.title(f"Hack the Act! 🤖")
@@ -39,7 +41,7 @@ def setup_qa_system(dir, files):
 
     # Create embeddings for the document chunks
     # embeddings = NVIDIAEmbeddings()
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(api_key=openai_api_key)
     vector_store = FAISS.from_documents(chunks, embeddings)
 
     # Create a retriever from the vector store
@@ -50,6 +52,7 @@ def setup_qa_system(dir, files):
             temperature=0.1,
             top_p=0.7,
             max_tokens=1024,
+            nvidia_api_key=nvidia_api_key,
     )
 
     # Create a RetrievalQA chain
