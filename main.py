@@ -1,21 +1,17 @@
 import streamlit as st
 
-from dotenv import load_dotenv 
-
 from langchain_community.document_loaders import PyPDFLoader 
 from langchain.chains import RetrievalQA 
 from langchain_community.vectorstores import FAISS 
 
-from langchain_openai.embeddings import OpenAIEmbeddings 
-# from langchain_nvidia_ai_endpoints.embeddings import NVIDIAEmbeddings
+# from langchain_openai.embeddings import OpenAIEmbeddings 
+from langchain_nvidia_ai_endpoints.embeddings import NVIDIAEmbeddings
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter 
 
 # from langchain_openai import ChatOpenAI 
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
-
-load_dotenv() 
 openai_api_key = st.secrets["api_keys"]["OPENAI_API_KEY"]
 nvidia_api_key = st.secrets["api_keys"]["NVIDIA_API_KEY"]
 
@@ -40,8 +36,11 @@ def setup_qa_system(dir, files):
     chunks = text_splitter.split_documents(docs)
 
     # Create embeddings for the document chunks
-    # embeddings = NVIDIAEmbeddings()
-    embeddings = OpenAIEmbeddings(api_key=openai_api_key)
+    embeddings = NVIDIAEmbeddings(
+            nvidia_api_key=nvidia_api_key,
+            model="nvidia/llama-3.2-nv-embedqa-1b-v2",
+    )
+    # embeddings = OpenAIEmbeddings(api_key=openai_api_key)
     vector_store = FAISS.from_documents(chunks, embeddings)
 
     # Create a retriever from the vector store
