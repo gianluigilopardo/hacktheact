@@ -1,107 +1,135 @@
 import streamlit as st
-
-from langchain_community.document_loaders import PyPDFLoader 
-from langchain.chains import RetrievalQA 
-from langchain_community.vectorstores import FAISS 
-
-# from langchain_openai.embeddings import OpenAIEmbeddings 
+from langchain_community.document_loaders import PyPDFLoader
+from langchain.chains import RetrievalQA
+from langchain_community.vectorstores import FAISS
 from langchain_nvidia_ai_endpoints.embeddings import NVIDIAEmbeddings
-
-from langchain.text_splitter import RecursiveCharacterTextSplitter 
-
-# from langchain_openai import ChatOpenAI 
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
-openai_api_key = st.secrets["api_keys"]["OPENAI_API_KEY"]
-nvidia_api_key = st.secrets["api_keys"]["NVIDIA_API_KEY"]
+# Set the page configuration to change the webpage title
+st.set_page_config(page_title="Hack the Act!", page_icon="🤖", layout="centered")
 
-# Set the title of the Streamlit app
-st.title(f"Hack the Act! 🤖")
-# Add a markdown description of the app
+# Set the title of the Streamlit app with an engaging emoji
+st.title("🌟 Hack the Act! 🤖")
+
+# Add a captivating description of the app
 st.markdown(
     """
-        **Hack the Act!** is a RAG-powered chatbot designed to demystify the [European Union AI Act](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689). 
-        The underlying LLM is [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) by [iGenius](https://www.igenius.ai/), a model tailored for regulated industries. 
-"""
-#        Available in five languages: English, Italian, French, German, and Spanish. 
+    **Welcome to Hack the Act!** 🚀
+
+    Dive into the intricacies of the [European Union AI Act](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689) with our [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)-based chatbot!
+    Powered by the cutting-edge [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) LLM by [iGenius](https://www.igenius.ai/),
+    tailored for regulated industries, this bot is your guide to understanding complex regulations effortlessly.
+    """
 )
 
-# Define a function to set up the question answering system
-def setup_qa_system(dir, files): 
-    """Sets up a question answering system using specified PDF documents.
+# Input field for NVIDIA API key with a clear call-to-action
+nvidia_api_key = st.text_input("Enter your [NVIDIA API Key](https://build.nvidia.com/) or [support the project](https://www.paypal.me/gianluigilopardo) to use the chatbot:", type="password")
 
-    This function loads and processes PDF documents from a given directory,
-    creates embeddings for the text chunks, and sets up a retrieval-based
-    question answering system using a pre-trained language model.
+# Customized donation button using Streamlit's button and HTML/CSS for styling
+donate_button = st.button("❤️ Support the Project")
 
-    Args:
-        dir (str): The directory path where the PDF files are located.
-        files (list of str): A list of file names (without extension) to be processed.
+# Check if the donation button was clicked
+if donate_button:
+    st.session_state.donation_clicked = True
+    st.markdown(
+        """
+        <a href="https://www.paypal.me/gianluigilopardo" target="_blank" style="color: #1E90FF; font-weight: bold;">Donate here</a> 🔗
+        """,
+        unsafe_allow_html=True
+    )
 
-    Returns:
-        RetrievalQA: A retrieval-based question answering chain ready to handle queries."""
-    # Load the relevant PDFs
+# Initialize session state for chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Use caching to store the QA system setup
+@st.cache_resource
+def setup_qa_system(dir, files, api_key):
+    """Sets up a question answering system using specified PDF documents."""
     docs = [doc for file in files for doc in PyPDFLoader(f'{dir}{file}.pdf').load_and_split()]
-
-    # Split the documents into smaller chunks for processing
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
     chunks = text_splitter.split_documents(docs)
-
-    # Create embeddings for the document chunks
     embeddings = NVIDIAEmbeddings(
-            nvidia_api_key=nvidia_api_key,
-            model="nvidia/llama-3.2-nv-embedqa-1b-v2",
+        nvidia_api_key=api_key,
+        model="nvidia/llama-3.2-nv-embedqa-1b-v2",
     )
-    # embeddings = OpenAIEmbeddings(api_key=openai_api_key)
     vector_store = FAISS.from_documents(chunks, embeddings)
-
-    # Create a retriever from the vector store
     retriever = vector_store.as_retriever()
-    # Initialize the ChatNVIDIA model
     llm = ChatNVIDIA(
-            model="igenius/colosseum_355b_instruct_16k",
-            temperature=0.1,
-            top_p=0.7,
-            max_tokens=1024,
-            nvidia_api_key=nvidia_api_key,
+        model="igenius/colosseum_355b_instruct_16k",
+        temperature=0.1,
+        top_p=0.8,
+        max_tokens=1024,
+        nvidia_api_key=api_key,
     )
-
-    # Create a RetrievalQA chain
     qa_chain = RetrievalQA.from_chain_type(llm, retriever=retriever)
-
-    return qa_chain 
+    return qa_chain
 
 # Define the directory and file names for the documents
-# dir = "https://raw.githubusercontent.com/gianluigilopardo/hacktheact/main/docs/"
 dir = "docs/"
-files = ['act_en', #'act_it', 'act_es', 'act_fr', 'act_de', 
-        'annex_en', #'annex_it', 'annex_es', 'annex_fr', 'annex_de', 
-    ]
+files = ['act_en', 'annex_en']
 
-# Set up the question answering system
-qa_chain = setup_qa_system(dir, files)
+# Check if the API key is provided or donation button is clicked
+if nvidia_api_key or st.session_state.get('donation_clicked'):
+    # Use the provided API key or the default one if donation button is clicked
+    api_key_to_use = nvidia_api_key if nvidia_api_key else st.secrets["api_keys"]["NVIDIA_API_KEY"]
+    # Set up the question answering system with the appropriate API key
+    qa_chain = setup_qa_system(dir, files, api_key_to_use)
+else:
+    st.error("Please insert a valid NVIDIA API key or [support the project](https://www.paypal.me/gianluigilopardo) to use the chatbot 🙏")
+    qa_chain = None
 
 # Define a function to generate a response to a question
 def generate_response(question):
-    """Generates a response to a given question using a QA chain.
-
-    Args:
-        question (str): The question for which a response is to be generated.
-
-    Returns:
-        None: The function displays the result using a streamlit info message."""
+    """Generates a response to a given question using a QA chain."""
     answer = qa_chain.invoke(question)
-    st.info(answer['result'])
-   
-# Create a Streamlit form
-with st.form("aiact_form"):
-    # Add a text area for the user to enter their question
-    text = st.text_area(
-        "Ask any question about the EU AI Act:", 
-        "What are the basic principles of the AI Act? "
-        )
-    
-    # Add a submit button
-    submitted = st.form_submit_button("Submit")
-    # Generate and display the response if the form is submitted
-    generate_response(text)
+    return answer['result']
+
+# Display chat messages from history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Accept user input with an engaging prompt
+if qa_chain and (prompt := st.chat_input("Ask away! What would you like to know about the EU AI Act?")):
+    # Display user message in chat message container
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # Generate and display the response
+    response = generate_response(prompt)
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    with st.chat_message("assistant"):
+        st.markdown(response)
+
+# Footer with centered text, always visible at the bottom, with smaller font size
+st.markdown(
+    """
+    <style>
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: white;
+        color: black;
+        text-align: center;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        z-index: 1000;
+        font-size: 0.8em; /* Smaller font size */
+    }
+    .main-content {
+        padding-bottom: 60px; /* Height of the footer */
+    }
+    </style>
+    <div class="main-content">
+    </div>
+    <div class="footer">
+        Made with ❤️ by <a href="https://www.gianluigilopardo.science/" style="color: #1E90FF;">Gianluigi Lopardo</a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
