@@ -5,6 +5,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_nvidia_ai_endpoints.embeddings import NVIDIAEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
+import time
 
 # Set the page configuration to change the webpage title
 st.set_page_config(page_title="Hack the Act!", page_icon="🤖", layout="centered")
@@ -15,11 +16,10 @@ st.title("🌟 Hack the Act! 🤖")
 # Add a captivating description of the app
 st.markdown(
     """
-    **Welcome to Hack the Act!** 🚀
+    **Welcome to Hack the Act!** 🚀 
 
-    Dive into the intricacies of the [European Union AI Act](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689) with our [RAG](https://en.wikipedia.org/wiki/Retrieval-augmented_generation)-based chatbot!
-    Powered by the cutting-edge [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) LLM by [iGenius](https://www.igenius.ai/),
-    tailored for regulated industries, this bot is your guide to understanding complex regulations effortlessly.
+    Hack the Act is your interactive guide to navigating the complexities of the [European Union AI Act](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689). 
+    Powered by advanced Retrieval-Augmented Generation (RAG) and the cutting-edge [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) LLM by iGenius, this chatbot is designed to provide clear, concise answers to your questions about the Act.
     """
 )
 
@@ -83,6 +83,9 @@ else:
 # Define a function to generate a response to a question
 def generate_response(question):
     """Generates a response to a given question using a QA chain."""
+    # Simulate thinking time
+    with st.spinner("Thinking..."):
+        time.sleep(2)  # Simulate delay
     answer = qa_chain.invoke(question)
     return answer['result']
 
