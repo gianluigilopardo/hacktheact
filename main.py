@@ -19,7 +19,7 @@ st.markdown(
     **Welcome to Hack the Act!** 🚀 
 
     Hack the Act is your interactive guide to navigating the complexities of the [European Union AI Act](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689). 
-    Powered by advanced Retrieval-Augmented Generation (RAG) and the cutting-edge [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) LLM by iGenius, this chatbot is designed to provide clear, concise answers to your questions about the Act.
+    Powered by Retrieval-Augmented Generation (RAG) and the cutting-edge [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) LLM by [iGenius](https://www.igenius.ai/), this chatbot is designed to provide clear, concise answers to your questions about the Act.
     """
 )
 
