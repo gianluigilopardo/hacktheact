@@ -28,6 +28,18 @@ st.markdown(
 
 # Define a function to set up the question answering system
 def setup_qa_system(dir, files): 
+    """Sets up a question answering system using specified PDF documents.
+
+    This function loads and processes PDF documents from a given directory,
+    creates embeddings for the text chunks, and sets up a retrieval-based
+    question answering system using a pre-trained language model.
+
+    Args:
+        dir (str): The directory path where the PDF files are located.
+        files (list of str): A list of file names (without extension) to be processed.
+
+    Returns:
+        RetrievalQA: A retrieval-based question answering chain ready to handle queries."""
     # Load the relevant PDFs
     docs = [doc for file in files for doc in PyPDFLoader(f'{dir}{file}.pdf').load_and_split()]
 
@@ -71,6 +83,13 @@ qa_chain = setup_qa_system(dir, files)
 
 # Define a function to generate a response to a question
 def generate_response(question):
+    """Generates a response to a given question using a QA chain.
+
+    Args:
+        question (str): The question for which a response is to be generated.
+
+    Returns:
+        None: The function displays the result using a streamlit info message."""
     answer = qa_chain.invoke(question)
     st.info(answer['result'])
    
