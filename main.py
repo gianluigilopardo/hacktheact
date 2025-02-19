@@ -16,11 +16,9 @@ st.title("🌟 Hack the Act! 🤖")
 # Add a captivating description of the app
 st.markdown(
     """
-    **Welcome to Hack the Act!** 🚀 
-    
-    Hack the Act! 🤖 is a RAG-based chatbot designed to navigate the complexities of the [European Union AI Act](https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689). 
-    Powered by [NeMo Retriever Llama3.2](https://build.nvidia.com/nvidia/llama-3_2-nv-embedqa-1b-v2) embeddings from [NVIDIA](build.nvidia.com) and the cutting-edge [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) LLM by [iGenius](https://www.igenius.ai/), it provides clear, concise answers to your regulatory questions. 
-    Check it out on [GitHub](https://github.com/gianluigilopardo/hacktheact)! 💻
+    Hack the Act! 🤖 is a RAG-based chatbot designed to navigate the complexities of the [European Union AI Act](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai). 
+    Powered by [NeMo Retriever Llama3.2](https://build.nvidia.com/nvidia/llama-3_2-nv-embedqa-1b-v2) embeddings from [NVIDIA](https://build.nvidia.com) and the cutting-edge [Colosseum 355B](https://build.nvidia.com/igenius/colosseum_355b_instruct_16k) LLM by [iGenius](https://www.igenius.ai/), it provides clear, concise answers to your regulatory questions. 
+    Check it out on [GitHub](https://github.com/gianluigilopardo/hacktheact)! 
     """
 )
 
@@ -84,10 +82,10 @@ else:
 # Define a function to generate a response to a question
 def generate_response(question):
     """Generates a response to a given question using a QA chain."""
-    # Simulate thinking time
+    # Show spinner while processing
     with st.spinner("Thinking..."):
-        time.sleep(2)  # Simulate delay
-    answer = qa_chain.invoke(question)
+        # Invoke the QA chain to get the answer
+        answer = qa_chain.invoke(question)
     return answer['result']
 
 # Display chat messages from history
