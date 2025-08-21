@@ -46,7 +46,7 @@ def render_footer():
         <div class="main-content">
         </div>
         <div class="footer">
-            Made with ❤️ by <a href="https://www.gianluigilopardo.science/" style="color: #1E90FF;">Gianluigi Lopardo</a>
+            Made with ❤️ by <a href="https://glopardo.com/" style="color: #1E90FF;">Gianluigi Lopardo</a>
         </div>
         """,
         unsafe_allow_html=True

@@ -1,3 +1,9 @@
 *.env
 *.toml
 *.devcontainer
+components/__pycache__/footer.cpython-313.pyc
+components/__pycache__/header.cpython-313.pyc
+components/__pycache__/tabs.cpython-313.pyc
+utils/__pycache__/config.cpython-313.pyc
+models/__pycache__/qa_systems.cpython-313.pyc
+.gitignore
